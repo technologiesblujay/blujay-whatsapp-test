@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>BLUJAY WhatsApp Embedded Signup Test</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 40px;
+      background: #f5f7fa;
+    }
+
+    button {
+      background: #1877f2;
+      color: white;
+      border: 0;
+      padding: 14px 24px;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    #log {
+      margin-top: 25px;
+      padding: 20px;
+      background: #111827;
+      color: #fff;
+      white-space: pre-wrap;
+      border-radius: 8px;
+      min-height: 200px;
+    }
+  </style>
+
+  <script>
+    const APP_ID = "1350912393453150";
+    const CONFIG_ID = "1632310361932223";
+
+    function log(message) {
+      console.log(message);
+
+      const box = document.getElementById("log");
+      box.textContent += "\n" + message;
+    }
+
+    window.fbAsyncInit = function () {
+
+      log("Facebook SDK loaded.");
+
+      FB.init({
+        appId: APP_ID,
+        cookie: true,
+        xfbml: false,
+        version: "v25.0"
+      });
+
+      log("FB.init completed.");
+      log("APP_ID = " + APP_ID);
+      log("CONFIG_ID = " + CONFIG_ID);
+    };
+
+    function connectWhatsApp() {
+
+      log("\n==============================");
+      log("CONNECT WHATSAPP CLICKED");
+      log("==============================");
+
+      if (typeof FB === "undefined") {
+        log("ERROR: Facebook SDK not loaded.");
+        return;
+      }
+
+      log("Calling FB.login()...");
+
+      FB.login(function (response) {
+
+        log("FB.login CALLBACK RECEIVED.");
+
+        log(JSON.stringify(response, null, 2));
+
+        if (response && response.authResponse) {
+          log("SUCCESS: authResponse received.");
+          log("ACCESS TOKEN EXISTS.");
+          log("USER ID = " + response.authResponse.userID);
+        } else {
+          log("NO authResponse.");
+          log("STATUS = " + (response ? response.status : "NO RESPONSE"));
+        }
+
+      }, {
+        config_id: CONFIG_ID,
+        response_type: "code",
+        override_default_response_type: true,
+
+        extras: {
+          setup: {},
+          featureType: "whatsapp_business_app_onboarding"
+        }
+      });
+    }
+  </script>
+
+  <script async defer crossorigin="anonymous"
+    src="https://connect.facebook.net/en_US/sdk.js">
+  </script>
+
+</head>
+
+<body>
+
+  <h1>BLUJAY WhatsApp Embedded Signup Test</h1>
+
+  <p>
+    App ID:
+    <strong>1350912393453150</strong>
+  </p>
+
+  <p>
+    Config ID:
+    <strong>1632310361932223</strong>
+  </p>
+
+  <button onclick="connectWhatsApp()">
+    Connect WhatsApp
+  </button>
+
+  <div id="log">Waiting for Facebook SDK...</div>
+
+</body>
+</html>
