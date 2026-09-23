@@ -1,346 +1,1354 @@
 <!DOCTYPE html>
-<html lang="en">
+
+<html>
+
 <head>
+
+  <base target="_top">
+
+
+
   <meta charset="UTF-8">
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>BLUJAY WhatsApp Embedded Signup Test</title>
+
+
+  <title>WhatsApp Setup - BLUJAY Technologies</title>
+
+
 
   <style>
+
     body {
+
       font-family: Arial, sans-serif;
+
       background: #f5f7fa;
+
       margin: 0;
-      padding: 40px;
+
+      padding: 0;
+
     }
+
+
 
     .container {
-      max-width: 900px;
-      margin: auto;
-      background: white;
+
+      max-width: 850px;
+
+      margin: 40px auto;
+
+      background: #ffffff;
+
       padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+
+      border-radius: 12px;
+
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+
     }
+
+
 
     h1 {
+
+      margin-top: 0;
+
       color: #1f2937;
-      margin-bottom: 10px;
+
     }
 
-    .info {
-      background: #f3f4f6;
-      padding: 18px;
-      border-radius: 8px;
-      margin: 20px 0;
-      line-height: 1.8;
+
+
+    .subtitle {
+
+      color: #6b7280;
+
+      margin-bottom: 25px;
+
     }
+
+
+
+    .info-box {
+
+      background: #f3f4f6;
+
+      padding: 15px;
+
+      border-radius: 8px;
+
+      margin-bottom: 20px;
+
+    }
+
+
+
+    .info-row {
+
+      margin: 8px 0;
+
+    }
+
+
+
+    .label {
+
+      font-weight: bold;
+
+      color: #374151;
+
+    }
+
+
+
+    .value {
+
+      color: #111827;
+
+      word-break: break-all;
+
+    }
+
+
 
     button {
+
       background: #1877f2;
+
       color: white;
+
       border: none;
-      padding: 14px 25px;
-      border-radius: 6px;
-      font-size: 16px;
-      font-weight: bold;
+
+      padding: 13px 22px;
+
+      border-radius: 7px;
+
       cursor: pointer;
+
+      font-size: 16px;
+
+      font-weight: 600;
+
     }
+
+
 
     button:hover {
-      background: #145dbf;
+
+      background: #166fe5;
+
     }
+
+
 
     #status {
-      margin-top: 20px;
-      padding: 15px;
-      border-radius: 6px;
-      background: #fff7ed;
-      border: 1px solid #fdba74;
-      color: #9a3412;
-      white-space: pre-wrap;
-    }
 
-    #log {
       margin-top: 20px;
-      padding: 20px;
-      background: #111827;
-      color: #e5e7eb;
+
+      padding: 18px;
+
       border-radius: 8px;
+
+      background: #f9fafb;
+
+      border: 1px solid #e5e7eb;
+
       white-space: pre-wrap;
-      font-family: Consolas, monospace;
+
+      word-break: break-word;
+
+      line-height: 1.6;
+
+    }
+
+
+
+    .success {
+
+      background: #ecfdf5 !important;
+
+      border-color: #10b981 !important;
+
+      color: #065f46;
+
+    }
+
+
+
+    .error {
+
+      background: #fef2f2 !important;
+
+      border-color: #ef4444 !important;
+
+      color: #991b1b;
+
+    }
+
+
+
+    .warning {
+
+      background: #fffbeb !important;
+
+      border-color: #f59e0b !important;
+
+      color: #92400e;
+
+    }
+
+
+
+    .debug-box {
+
+      margin-top: 20px;
+
+      background: #111827;
+
+      color: #e5e7eb;
+
+      padding: 15px;
+
+      border-radius: 8px;
+
+      white-space: pre-wrap;
+
+      word-break: break-word;
+
+      font-family: monospace;
+
       font-size: 13px;
-      line-height: 1.5;
-      min-height: 220px;
-      overflow-x: auto;
+
+      max-height: 450px;
+
+      overflow-y: auto;
+
     }
+
+
+
+    .small {
+
+      font-size: 13px;
+
+      color: #6b7280;
+
+      margin-top: 15px;
+
+    }
+
   </style>
-
-  <script>
-    const APP_ID = "1350912393453150";
-    const CONFIG_ID = "1632310361932223";
-
-    function log(message) {
-      console.log(message);
-
-      const box = document.getElementById("log");
-
-      if (box) {
-        box.textContent += message + "\n";
-      }
-    }
-
-    function showStatus(message) {
-      const status = document.getElementById("status");
-
-      if (status) {
-        status.textContent = message;
-      }
-    }
-
-    /*
-     * Listen for Embedded Signup messages.
-     * This helps us see whether Meta sends
-     * WA_EMBEDDED_SIGNUP events.
-     */
-    window.addEventListener("message", function (event) {
-
-      log("WINDOW.MESSAGE EVENT RECEIVED");
-
-      try {
-
-        let data = event.data;
-
-        if (typeof data === "string") {
-          try {
-            data = JSON.parse(data);
-          } catch (e) {
-            // Not JSON, keep original value
-          }
-        }
-
-        log("MESSAGE DATA = " + JSON.stringify(data, null, 2));
-
-        if (data && data.type === "WA_EMBEDDED_SIGNUP") {
-
-          log("================================");
-          log("WA_EMBEDDED_SIGNUP EVENT RECEIVED");
-          log("================================");
-
-          log(JSON.stringify(data, null, 2));
-
-        }
-
-      } catch (error) {
-
-        log(
-          "ERROR PROCESSING WINDOW.MESSAGE: " +
-          error.message
-        );
-
-      }
-
-    });
-
-
-    /*
-     * Facebook SDK initialization
-     */
-    window.fbAsyncInit = function () {
-
-      log("Facebook SDK loaded.");
-
-      FB.init({
-        appId: APP_ID,
-        cookie: true,
-        xfbml: false,
-        version: "v25.0"
-      });
-
-      log("FB.init completed.");
-
-      log("APP_ID = " + APP_ID);
-
-      log("CONFIG_ID = " + CONFIG_ID);
-
-      log("READY FOR EMBEDDED SIGNUP.");
-
-    };
-
-
-    /*
-     * WhatsApp Embedded Signup
-     */
-    function connectWhatsApp() {
-
-      log("");
-      log("==============================");
-      log("CONNECT WHATSAPP CLICKED");
-      log("==============================");
-
-      showStatus("Starting Meta Embedded Signup...");
-
-      if (typeof FB === "undefined") {
-
-        log("ERROR: Facebook SDK is not loaded.");
-
-        showStatus(
-          "Facebook SDK is not loaded."
-        );
-
-        return;
-      }
-
-      log("Facebook SDK is available.");
-
-      log("APP_ID = " + APP_ID);
-
-      log("CONFIG_ID = " + CONFIG_ID);
-
-      log("Calling FB.login()...");
-
-
-      FB.login(function (response) {
-
-        log("");
-
-        log("==============================");
-        log("FB.LOGIN CALLBACK RECEIVED");
-        log("==============================");
-
-        log(
-          "FB.LOGIN RESPONSE = " +
-          JSON.stringify(response, null, 2)
-        );
-
-
-        if (response && response.authResponse) {
-
-          log("SUCCESS: authResponse received.");
-
-          log(
-            "USER ID = " +
-            response.authResponse.userID
-          );
-
-          log("Authorization response received.");
-
-          showStatus(
-            "SUCCESS: Meta authorization response received."
-          );
-
-        } else {
-
-          log("NO authResponse.");
-
-          log(
-            "STATUS = " +
-            (response ? response.status : "NO RESPONSE")
-          );
-
-          showStatus(
-            "No authorization response received.\n\n" +
-            JSON.stringify(response, null, 2)
-          );
-
-        }
-
-      }, {
-
-        /*
-         * Embedded Signup configuration
-         */
-        config_id: CONFIG_ID,
-
-        /*
-         * Request authorization code
-         */
-        response_type: "code",
-
-        /*
-         * Required for code response
-         */
-        override_default_response_type: true,
-
-        /*
-         * Clean v4 setup
-         *
-         * IMPORTANT:
-         * No featureType
-         * No sessionInfoVersion
-         */
-        extras: {
-          setup: {}
-        }
-
-      });
-
-      log("FB.login() call completed.");
-
-    }
-  </script>
-
-
-  <!-- Facebook JavaScript SDK -->
-  <script
-    async
-    defer
-    crossorigin="anonymous"
-    src="https://connect.facebook.net/en_US/sdk.js">
-  </script>
 
 </head>
 
 
+
 <body>
 
-  <div class="container">
-
-    <h1>
-      BLUJAY WhatsApp Embedded Signup Test
-    </h1>
-
-    <p>
-      Standalone HTTPS test outside Google Apps Script.
-    </p>
 
 
-    <div class="info">
-
-      <strong>App ID:</strong>
-      1350912393453150
-      <br>
-
-      <strong>Config ID:</strong>
-      1632310361932223
-      <br>
-
-      <strong>Embedded Signup Version:</strong>
-      v4
-      <br>
-
-      <strong>Test Domain:</strong>
-      technologiesblujay.github.io
-
-    </div>
+<div class="container">
 
 
-    <button onclick="connectWhatsApp()">
-      Connect WhatsApp
-    </button>
+
+  <h1>WhatsApp Business Setup</h1>
 
 
-    <div id="status">
-      Waiting for Facebook SDK...
-    </div>
 
+  <div class="subtitle">
 
-    <div id="log">
-      Initializing...
-    </div>
+    BLUJAY Technologies - WhatsApp Embedded Signup
 
   </div>
 
+
+
+  <div class="info-box">
+
+
+
+    <div class="info-row">
+
+      <span class="label">App ID:</span>
+
+      <span class="value" id="appIdDisplay"></span>
+
+    </div>
+
+
+
+    <div class="info-row">
+
+      <span class="label">Config ID:</span>
+
+      <span class="value" id="configIdDisplay"></span>
+
+    </div>
+
+
+
+    <div class="info-row">
+
+      <span class="label">Embedded Signup Version:</span>
+
+      <span class="value">v4</span>
+
+    </div>
+
+
+
+  </div>
+
+
+
+  <button id="connectButton" onclick="launchWhatsAppSignup()">
+
+    Connect WhatsApp
+
+  </button>
+
+
+
+  <div id="status">
+
+    Loading Facebook SDK...
+
+  </div>
+
+
+
+  <div id="debug" class="debug-box">
+
+    Initializing...
+
+  </div>
+
+
+
+  <div class="small">
+
+    Complete the Meta Embedded Signup process in the popup/window.
+
+  </div>
+
+
+
+</div>
+
+
+
+
+
+<!-- =====================================================
+
+     FACEBOOK JAVASCRIPT SDK
+
+     ===================================================== -->
+
+
+
+<script
+
+  async
+
+  defer
+
+  crossorigin="anonymous"
+
+  src="https://connect.facebook.net/en_US/sdk.js">
+
+</script>
+
+
+
+
+
+<script>
+
+
+
+  /********************************************************
+
+   * META CONFIGURATION
+
+   ********************************************************/
+
+
+
+  const APP_ID = "1350912393453150";
+
+
+
+  const CONFIG_ID = "1632310361932223";
+
+
+
+
+
+
+  // Embedded Signup state.
+  let embeddedSignupData = null;
+  let authorizationCode = null;
+  let exchangeStarted = false;
+  let currentRequestId = null;
+
+  // Apps Script Web App backend. This endpoint receives the one-time
+  // Meta authorization code by POST and exchanges it server-side.
+  const BACKEND_URL = "https://script.google.com/macros/s/AKfycbzMP0qCKJs9l_RdUEfCs4GNPQLQ83wTrlPEUJfpZdvyzalUcAFVtL-3n2KCYkQiujAx/exec";
+
+  function handleEmbeddedSignupData(data) {
+    if (!data || data.type !== "WA_EMBEDDED_SIGNUP") return;
+
+    if (data.event === "FINISH" && data.data) {
+      embeddedSignupData = data.data;
+      debug("FINISH DATA STORED:\n" + JSON.stringify(embeddedSignupData, null, 2));
+      tryExchangeAuthorizationCode();
+    }
+  }
+
+  function handleAuthorizationCode(code) {
+    if (!code || exchangeStarted) return;
+    authorizationCode = code;
+    debug("AUTHORIZATION CODE RECEIVED.");
+    tryExchangeAuthorizationCode();
+  }
+
+  function tryExchangeAuthorizationCode() {
+    if (exchangeStarted) return;
+
+    if (!authorizationCode) {
+      debug("Waiting for authorization code...");
+      return;
+    }
+
+    if (!embeddedSignupData) {
+      debug("Waiting for WA_EMBEDDED_SIGNUP FINISH data...");
+      return;
+    }
+
+    const phoneNumberId = embeddedSignupData.phone_number_id;
+    const wabaId = embeddedSignupData.waba_id;
+    const businessId = embeddedSignupData.business_id;
+
+    if (!phoneNumberId || !wabaId || !businessId) {
+      setStatus(
+        "Embedded Signup finished, but Meta did not return all required asset IDs.",
+        "error"
+      );
+      debug("Missing phone_number_id, waba_id, or business_id.");
+      return;
+    }
+
+    exchangeStarted = true;
+    currentRequestId = "BJWA-" + Date.now() + "-" + Math.random().toString(36).slice(2);
+
+    setStatus(
+      "Meta authorization received.\n\nSending the secure handoff to BLUJAY server...",
+      "warning"
+    );
+
+    debug("STARTING SERVER-SIDE AUTHORIZATION-CODE EXCHANGE...");
+    debug("Phone Number ID = " + phoneNumberId);
+    debug("WABA ID = " + wabaId);
+    debug("Business ID = " + businessId);
+    debug("Backend = Apps Script Web App");
+
+    submitSignupToBackend(
+      authorizationCode,
+      phoneNumberId,
+      wabaId,
+      businessId,
+      currentRequestId
+    );
+  }
+
+  function submitSignupToBackend(code, phoneNumberId, wabaId, businessId, requestId) {
+    const iframeName = "blujayWaBackendFrame_" + Date.now();
+    const iframe = document.createElement("iframe");
+    iframe.name = iframeName;
+    iframe.id = iframeName;
+    iframe.style.display = "none";
+    document.body.appendChild(iframe);
+
+    const form = document.createElement("form");
+    form.method = "POST";
+    form.action = BACKEND_URL;
+    form.target = iframeName;
+    form.style.display = "none";
+
+    const fields = {
+      action: "exchange_whatsapp_signup",
+      request_id: requestId,
+      code: code,
+      phone_number_id: phoneNumberId,
+      waba_id: wabaId,
+      business_id: businessId
+    };
+
+    Object.keys(fields).forEach(function(name) {
+      const input = document.createElement("input");
+      input.type = "hidden";
+      input.name = name;
+      input.value = fields[name];
+      form.appendChild(input);
+    });
+
+    document.body.appendChild(form);
+    form.submit();
+    form.remove();
+
+    debug("POST submitted to Apps Script backend.");
+    debug("Waiting for server exchange result...");
+  }
+
+  // Result sent back from the Apps Script response inside the hidden iframe.
+  window.addEventListener("message", function(event) {
+    const data = event.data;
+
+    if (!data || data.type !== "BLUJAY_WA_EXCHANGE_RESULT") return;
+    if (!currentRequestId || data.request_id !== currentRequestId) return;
+
+    debug("SERVER EXCHANGE RESPONSE RECEIVED.");
+
+    if (data.success && data.result) {
+      const result = data.result;
+
+      setStatus(
+        "SUCCESS - WhatsApp Embedded Signup connected.\n\n" +
+        "Phone Number ID: " + result.phone_number_id + "\n" +
+        "WABA ID: " + result.waba_id + "\n" +
+        "Business ID: " + result.business_id + "\n\n" +
+        "Access token stored securely in Apps Script.",
+        "success"
+      );
+
+      debug("TOKEN EXCHANGE SUCCESS.");
+      debug("ACCESS TOKEN STORED = " + result.access_token_stored);
+      debug("WABA SUBSCRIBED = " + result.waba_subscribed_to_app);
+      debug("PHONE VERIFIED = " + result.phone_verified_through_graph);
+    } else {
+      exchangeStarted = false;
+      const message = data.error || "Unknown server-side error.";
+
+      setStatus(
+        "Meta authorization succeeded, but the server-side exchange failed.\n\n" +
+        message,
+        "error"
+      );
+
+      debug("SERVER EXCHANGE FAILED: " + message);
+    }
+  });
+
+  /********************************************************
+
+   * PAGE DISPLAY
+
+   ********************************************************/
+
+
+
+  document.getElementById("appIdDisplay").textContent = APP_ID;
+
+
+
+  document.getElementById("configIdDisplay").textContent = CONFIG_ID;
+
+
+
+
+
+  /********************************************************
+
+   * DEBUG
+
+   ********************************************************/
+
+
+
+  function debug(message) {
+
+
+
+    const box = document.getElementById("debug");
+
+
+
+    const time = new Date().toLocaleTimeString();
+
+
+
+    box.textContent +=
+
+      "\n[" + time + "] " + message;
+
+
+
+    box.scrollTop = box.scrollHeight;
+
+  }
+
+
+
+
+
+  function clearDebug() {
+
+
+
+    document.getElementById("debug").textContent = "";
+
+  }
+
+
+
+
+
+  /********************************************************
+
+   * STATUS
+
+   ********************************************************/
+
+
+
+  function setStatus(message, type) {
+
+
+
+    const box = document.getElementById("status");
+
+
+
+    box.textContent = message;
+
+
+
+    box.className = "";
+
+
+
+    if (type) {
+
+      box.classList.add(type);
+
+    }
+
+  }
+
+
+
+
+
+  /********************************************************
+
+   * META EMBEDDED SIGNUP MESSAGE LISTENER
+
+   * Register this BEFORE FB.login().
+
+   ********************************************************/
+
+  window.addEventListener("message", function(event) {
+    let data = event.data;
+
+    try {
+      if (typeof data === "string") {
+        data = JSON.parse(data);
+      }
+    } catch (error) {
+      return;
+    }
+
+    if (!data || data.type !== "WA_EMBEDDED_SIGNUP") {
+      return;
+    }
+
+    debug("WINDOW MESSAGE RECEIVED");
+    debug("Origin: " + event.origin);
+    debug("MESSAGE DATA = " + JSON.stringify(data, null, 2));
+
+    if (data.event === "FINISH") {
+      setStatus(
+        "Embedded Signup completed. Waiting for authorization response...",
+        "warning"
+      );
+      debug("WA_EMBEDDED_SIGNUP FINISH RECEIVED.");
+      handleEmbeddedSignupData(data);
+      return;
+    }
+
+    if (data.event === "FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING") {
+      setStatus(
+        "WhatsApp Business App onboarding completed.\n\n" +
+        JSON.stringify(data, null, 2),
+        "success"
+      );
+      debug("FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING RECEIVED.");
+      return;
+    }
+
+    if (data.event === "CANCEL") {
+      setStatus(
+        "Embedded Signup was cancelled.\n\n" +
+        JSON.stringify(data, null, 2),
+        "warning"
+      );
+      debug("CANCEL EVENT RECEIVED.");
+      return;
+    }
+
+    if (data.event === "ERROR") {
+      setStatus(
+        "META EMBEDDED SIGNUP ERROR.\n\n" +
+        JSON.stringify(data, null, 2),
+        "error"
+      );
+      debug("ERROR EVENT RECEIVED.");
+      return;
+    }
+  });
+
+  /********************************************************
+
+   * FACEBOOK SDK INITIALIZATION
+
+   ********************************************************/
+
+
+
+  window.fbAsyncInit = function() {
+
+
+
+    debug(
+
+      "Facebook SDK callback executed."
+
+    );
+
+
+
+    try {
+
+
+
+      FB.init({
+
+
+
+        appId: APP_ID,
+
+
+
+        autoLogAppEvents: true,
+
+
+
+        cookie: true,
+
+
+
+        xfbml: true,
+
+
+
+        version: "v25.0"
+
+
+
+      });
+
+
+
+
+
+      debug(
+
+        "FB.init() SUCCESS."
+
+      );
+
+
+
+
+
+      debug(
+
+        "Facebook SDK is READY."
+
+      );
+
+
+
+
+
+      setStatus(
+
+
+
+        "Facebook SDK loaded successfully.\n\n" +
+
+        "Ready to connect WhatsApp."
+
+
+
+      );
+
+
+
+    } catch (error) {
+
+
+
+      debug(
+
+        "FB.init() ERROR: " +
+
+        error.message
+
+      );
+
+
+
+
+
+      setStatus(
+
+
+
+        "Facebook SDK initialization failed.\n\n" +
+
+        error.message,
+
+
+
+        "error"
+
+
+
+      );
+
+
+
+    }
+
+
+
+  };
+
+
+
+
+
+  /********************************************************
+
+   * LAUNCH WHATSAPP EMBEDDED SIGNUP
+
+   ********************************************************/
+
+
+
+  function launchWhatsAppSignup() {
+
+
+
+    clearDebug();
+
+
+
+
+
+    /******************************************************
+
+     * STEP 1
+
+     ******************************************************/
+
+
+
+    debug(
+
+      "STEP 1: Connect WhatsApp clicked."
+
+    );
+
+
+
+
+
+    /******************************************************
+
+     * STEP 2
+
+     ******************************************************/
+
+
+
+    if (typeof FB === "undefined") {
+
+
+
+      debug(
+
+        "STEP 2 FAILED: FB is undefined."
+
+      );
+
+
+
+
+
+      setStatus(
+
+
+
+        "Facebook SDK is not loaded.\n\n" +
+
+        "Please refresh the page and try again.",
+
+
+
+        "error"
+
+
+
+      );
+
+
+
+      return;
+
+    }
+
+
+
+
+
+    debug(
+
+      "STEP 2 PASSED: Facebook SDK loaded."
+
+    );
+
+
+
+
+
+    /******************************************************
+
+     * STEP 3
+
+     ******************************************************/
+
+
+
+    debug(
+
+      "APP_ID = " + APP_ID
+
+    );
+
+
+
+    debug(
+
+      "CONFIG_ID = " + CONFIG_ID
+
+    );
+
+
+
+
+
+    setStatus(
+
+
+
+      "Opening Meta WhatsApp Embedded Signup..."
+
+
+
+    );
+
+
+
+
+
+    /******************************************************
+
+     * STEP 4
+
+     *
+
+     * IMPORTANT:
+
+     * FB.login() is called synchronously inside the
+
+     * user's click handler.
+
+     ******************************************************/
+
+
+
+    debug(
+
+      "STEP 3: Calling FB.login()..."
+
+    );
+
+
+
+
+
+    try {
+
+
+
+      FB.login(
+
+
+
+        function(response) {
+
+
+
+          debug(
+
+            "STEP 4: FB.login callback received."
+
+          );
+
+
+
+
+
+          debug(
+
+
+
+            "FB.LOGIN RESPONSE:\n" +
+
+            JSON.stringify(
+
+              response,
+
+              null,
+
+              2
+
+            )
+
+
+
+          );
+
+
+
+
+
+          /***********************************************
+
+           * AUTHORIZATION CODE
+
+           ***********************************************/          if (
+            response &&
+            response.authResponse &&
+            response.authResponse.code
+          ) {
+
+            handleAuthorizationCode(response.authResponse.code);
+            return;
+          }
+
+
+
+
+
+          /***********************************************
+
+           * NO AUTHORIZATION RESPONSE
+
+           ***********************************************/
+
+
+
+          debug(
+
+            "No authorization code."
+
+          );
+
+
+
+
+
+          debug(
+
+            "Status = " +
+
+            (
+
+              response
+
+                ? response.status
+
+                : "NO RESPONSE"
+
+            )
+
+          );
+
+
+
+
+
+          setStatus(
+
+
+
+            "FB.LOGIN CALLBACK RECEIVED.\n\n" +
+
+
+
+            JSON.stringify(
+
+              response,
+
+              null,
+
+              2
+
+            ) +
+
+
+
+            "\n\n" +
+
+
+
+            "No authorization code was returned.\n" +
+
+
+
+            "Check the Meta Login for Business settings " +
+
+            "and browser popup/origin restrictions.",
+
+
+
+            "warning"
+
+
+
+          );
+
+
+
+        },
+
+
+
+
+
+        /************************************************
+
+         * META EMBEDDED SIGNUP OPTIONS
+
+         ************************************************/
+
+
+
+        {
+
+
+
+          config_id: CONFIG_ID,
+
+
+
+          response_type: "code",
+
+
+
+          override_default_response_type: true,
+
+
+
+          extras: {
+
+
+
+            setup: {},
+
+
+
+            /*
+
+             * Existing number is on WhatsApp Business App.
+
+             *
+
+             * This activates the Coexistence/
+
+             * WhatsApp Business App onboarding flow.
+
+             */
+
+
+
+            featureType:
+
+              "whatsapp_business_app_onboarding"
+
+
+
+          }
+
+
+
+        }
+
+
+
+      );
+
+
+
+
+
+      debug(
+
+        "STEP 5: FB.login() invoked."
+
+      );
+
+
+
+
+
+    } catch (error) {
+
+
+
+      debug(
+
+        "FB.login() EXCEPTION: " +
+
+        error.message
+
+      );
+
+
+
+
+
+      setStatus(
+
+
+
+        "FB.login() JavaScript error:\n\n" +
+
+        error.message,
+
+
+
+        "error"
+
+
+
+      );
+
+
+
+    }
+
+
+
+  };
+
+
+
+
+
+  /********************************************************
+
+   * GLOBAL ERROR HANDLER
+
+   ********************************************************/
+
+
+
+  window.addEventListener(
+
+    "error",
+
+    function(event) {
+
+
+
+      debug(
+
+        "GLOBAL ERROR: " +
+
+        (
+
+          event.message ||
+
+          "Unknown JavaScript error"
+
+        )
+
+      );
+
+
+
+    }
+
+  );
+
+
+
+
+
+  /********************************************************
+
+   * UNHANDLED PROMISE ERROR
+
+   ********************************************************/
+
+
+
+  window.addEventListener(
+
+    "unhandledrejection",
+
+    function(event) {
+
+
+
+      debug(
+
+        "UNHANDLED PROMISE ERROR: " +
+
+        event.reason
+
+      );
+
+
+
+    }
+
+  );
+
+
+
+</script>
+
+
+
 </body>
+
 </html>
