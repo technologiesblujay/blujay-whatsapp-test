@@ -502,8 +502,113 @@
 
     debug("POST submitted to Apps Script backend.");
     debug("Waiting for server exchange result...");
+
+    // Apps Script is cross-origin from GitHub Pages. Poll the backend
+    // using JSONP instead of relying on the hidden iframe response.
+    startSignupStatusPolling(requestId);
   }
 
+  let signupPollTimer = null;
+  let signupPollAttempts = 0;
+  const MAX_SIGNUP_POLL_ATTEMPTS = 45;
+
+  function startSignupStatusPolling(requestId) {
+    if (signupPollTimer) clearInterval(signupPollTimer);
+    signupPollAttempts = 0;
+    debug("STARTING SERVER STATUS POLLING...");
+    pollSignupStatus(requestId);
+    signupPollTimer = setInterval(function() {
+      pollSignupStatus(requestId);
+    }, 2000);
+  }
+
+  function stopSignupStatusPolling() {
+    if (signupPollTimer) {
+      clearInterval(signupPollTimer);
+      signupPollTimer = null;
+    }
+  }
+
+  function pollSignupStatus(requestId) {
+    if (!requestId || requestId !== currentRequestId) return;
+
+    signupPollAttempts++;
+    if (signupPollAttempts > MAX_SIGNUP_POLL_ATTEMPTS) {
+      stopSignupStatusPolling();
+      exchangeStarted = false;
+      setStatus(
+        "The server exchange is taking longer than expected. Please check Apps Script Executions before trying again.",
+        "error"
+      );
+      debug("SERVER STATUS POLLING TIMEOUT.");
+      return;
+    }
+
+    const callbackName = "blujaySignupStatus_" + Date.now() + "_" + signupPollAttempts;
+    const script = document.createElement("script");
+
+    window[callbackName] = function(data) {
+      try {
+        if (!data) return;
+
+        if (data.status === "pending") {
+          debug("SERVER STATUS: pending (attempt " + signupPollAttempts + ").");
+          return;
+        }
+
+        stopSignupStatusPolling();
+        debug("SERVER EXCHANGE RESPONSE RECEIVED.");
+
+        if (data.success && data.result) {
+          const result = data.result;
+          setStatus(
+            "SUCCESS - WhatsApp Embedded Signup connected.\n\n" +
+            "Phone Number ID: " + result.phone_number_id + "\n" +
+            "WABA ID: " + result.waba_id + "\n" +
+            "Business ID: " + result.business_id + "\n\n" +
+            "Access token stored securely in Apps Script.",
+            "success"
+          );
+          debug("TOKEN EXCHANGE SUCCESS.");
+          debug("ACCESS TOKEN STORED = " + result.access_token_stored);
+          debug("WABA SUBSCRIBED = " + result.waba_subscribed_to_app);
+          debug("PHONE VERIFIED = " + result.phone_verified_through_graph);
+        } else {
+          exchangeStarted = false;
+          const message = data.error || "Unknown server-side error.";
+          setStatus(
+            "Meta authorization succeeded, but the server-side exchange failed.\n\n" +
+            message,
+            "error"
+          );
+          debug("SERVER EXCHANGE FAILED: " + message);
+        }
+      } finally {
+        try {
+          delete window[callbackName];
+          script.remove();
+        } catch (e) {}
+      }
+    };
+
+    script.onerror = function() {
+      debug("STATUS POLL REQUEST FAILED. Attempt " + signupPollAttempts + ".");
+      try {
+        delete window[callbackName];
+        script.remove();
+      } catch (e) {}
+    };
+
+    script.src = BACKEND_URL +
+      "?action=whatsapp_signup_status" +
+      "&request_id=" + encodeURIComponent(requestId) +
+      "&callback=" + encodeURIComponent(callbackName) +
+      "&_=" + Date.now();
+
+    document.body.appendChild(script);
+  }
+
+  // Fallback listener. Primary result path is JSONP polling above.
   // Result sent back from the Apps Script response inside the hidden iframe.
   window.addEventListener("message", function(event) {
     const data = event.data;
