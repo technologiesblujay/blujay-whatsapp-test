@@ -964,6 +964,17 @@
 
 
 
+    // Reset all previous Embedded Signup state before starting a new attempt.
+    // Authorization codes from Meta are one-time values and must never be reused.
+    stopSignupStatusPolling();
+    embeddedSignupData = null;
+    authorizationCode = null;
+    exchangeStarted = false;
+    currentRequestId = null;
+    signupPollAttempts = 0;
+
+
+
 
 
     /******************************************************
